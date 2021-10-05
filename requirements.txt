@@ -1,0 +1,8 @@
+# Conda packages (Miguel)
+numpy
+pandas
+PyYAML
+
+# Pip packages (Miguel)
+Pyomo
+
