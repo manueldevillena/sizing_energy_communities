@@ -1,6 +1,6 @@
-import pandas as pd
+from sizing.utils import read_inputs, set_file_to_object
 
-from sizing.utils import read_data, read_inputs
+DEFAULT_ATTR = 0
 
 
 class OptimisationInputs:
@@ -8,33 +8,39 @@ class OptimisationInputs:
     Object gathering all the inputs for the different optimisation problems.
     """
 
-    def __init__(self, demand_members_path: str, production_members_path: str, prices_import_grid_members_path: str,
-                 prices_import_local_members_path: str, prices_export_grid_members_path: str,
-                 prices_export_local_members_path: str, initial_capacity_path: str, cost_technology_path: str,
-                 cost_technology_running_fixed_path: str, additional_inputs_path: str, output_path: str):
+    def __init__(self, input_parameters: str, input_files: str, output_path: str):
         """
         Constructor.
         """
-        self.demand_members: pd.DataFrame = read_data(demand_members_path)
-        self.production_members: pd.DataFrame = read_data(production_members_path)
-        self.prices_import_grid_members: pd.DataFrame = read_data(prices_import_grid_members_path)
-        self.prices_import_local_members: pd.DataFrame = read_data(prices_import_local_members_path)
-        self.prices_export_grid_members: pd.DataFrame = read_data(prices_export_grid_members_path)
-        self.prices_export_local_members: pd.DataFrame = read_data(prices_export_local_members_path)
-        self.initial_capacity: pd.DataFrame = read_data(initial_capacity_path)
-        self.cost_technology: pd.DataFrame = read_data(cost_technology_path)
-        self.cost_technology_running_fixed: pd.DataFrame = read_data(cost_technology_running_fixed_path)
-        self.output_path: str = output_path
+        input_parameters = read_inputs(input_parameters)
 
-        inputs = read_inputs(additional_inputs_path)
         # Mandatory attributes
         for attr in [
             'interest_rate', 'discount_rate', 'lifetime', 'efficiency_charge', 'efficiency_discharge', 'charge_rate',
             'discharge_rate'
         ]:
             try:
-                setattr(self, attr, inputs[attr])
+                setattr(self, attr, input_parameters[attr])
             except KeyError:
                 raise KeyError('Attribute "{}" is mandatory in the configuration file.'.format(attr))
 
-        self.cost_technology_running_variable = 0
+        # Mandatory files
+        for file in [
+            'demand', 'generation'
+        ]:
+            try:
+                set_file_to_object(self, input_files, file)
+            except KeyError:
+                raise KeyError('File "{}.csv" is mandatory and was not found in the inputs.'.format(file))
+
+        # Optional files
+        for file in [
+            'prices_grid_import', 'prices_grid_export', 'prices_community_import', 'prices_community_export',
+            'cost_technology_investment', 'cost_technology_running_fixed', 'cost_technology_running_variable'
+        ]:
+            try:
+                set_file_to_object(self, input_files, file)
+            except FileNotFoundError:
+                setattr(self, file, DEFAULT_ATTR)
+
+        self.output_path: str = output_path
