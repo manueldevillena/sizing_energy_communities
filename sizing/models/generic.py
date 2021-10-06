@@ -26,7 +26,7 @@ class GenericModel(ABC):
         """
         annuity_factor = self._compute_annuity_factor(self._inputs.interest_rate, self._inputs.lifetime)
         discount_factor = self._compute_discount_factor(self._inputs.discount_rate, self._inputs.lifetime)
-        frequency = self._infer_frequency(self._inputs.demand_members.index)
+        frequency = self._infer_frequency(self._inputs.demand.index)
 
         return annuity_factor, discount_factor, frequency
 
@@ -46,8 +46,7 @@ class GenericModel(ABC):
         """
         raise NotImplementedError
 
-    @staticmethod
-    def _post_process(model: pyo.ConcreteModel):
+    def _post_process(self, model: pyo.ConcreteModel):
         """
         Extracts and processes the results of the optimisation.
         :param model: model containing the variables and equations to be solved.

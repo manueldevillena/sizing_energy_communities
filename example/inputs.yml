@@ -1,3 +1,4 @@
+# Mandatory attributes
 interest_rate: 0
 discount_rate: 0.02
 lifetime: 20
@@ -5,4 +6,6 @@ efficiency_charge: 0.95
 efficiency_discharge: 0.95
 charge_rate: 3
 discharge_rate: 3
-stochastic: [0.5, 0.5]
+
+# Optional attributes
+#stochastic: [0.5, 0.5]

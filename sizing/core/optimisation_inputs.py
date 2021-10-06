@@ -58,7 +58,8 @@ class OptimisationInputs:
         # Optional files
         for file in [
             'prices_grid_import', 'prices_grid_export', 'prices_community_import', 'prices_community_export',
-            'cost_technology_investment', 'cost_technology_running_fixed', 'cost_technology_running_variable'
+            'cost_technology_investment', 'cost_technology_running_fixed', 'cost_technology_running_variable',
+            'initial_capacity'
         ]:
             try:
                 set_file_to_object(self, input_files, file)
