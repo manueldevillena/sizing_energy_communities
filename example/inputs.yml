@@ -5,3 +5,4 @@ efficiency_charge: 0.95
 efficiency_discharge: 0.95
 charge_rate: 3
 discharge_rate: 3
+stochastic: [0.5, 0.5]

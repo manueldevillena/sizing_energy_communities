@@ -1,3 +1,5 @@
+import itertools
+
 from sizing.utils import read_inputs, set_file_to_object
 
 DEFAULT_ATTR = 0
@@ -12,6 +14,7 @@ class OptimisationInputs:
         """
         Constructor.
         """
+        self.stochastic = None
         input_parameters = read_inputs(input_parameters)
 
         # Mandatory attributes
@@ -24,14 +27,33 @@ class OptimisationInputs:
             except KeyError:
                 raise KeyError('Attribute "{}" is mandatory in the configuration file.'.format(attr))
 
-        # Mandatory files
-        for file in [
-            'demand', 'generation'
+        # Optional attributes
+        for attr in [
+            'stochastic'
         ]:
             try:
-                set_file_to_object(self, input_files, file)
+                setattr(self, attr, input_parameters[attr])
             except KeyError:
-                raise KeyError('File "{}.csv" is mandatory and was not found in the inputs.'.format(file))
+                pass
+
+        # Mandatory files
+        if self.stochastic:
+            number_scenarios = len(self.stochastic)
+            files_demand = ['demand_scenario_{}'.format(i) for i in range(1, number_scenarios+1)]
+            files_generation = ['generation_scenario_{}'.format(i) for i in range(1, number_scenarios+1)]
+            for file in itertools.chain(*[files_demand, files_generation]):
+                try:
+                    set_file_to_object(self, input_files, file)
+                except FileNotFoundError:
+                    raise FileNotFoundError('File "{}.csv" is mandatory and was not found in the inputs.'.format(file))
+        else:
+            for file in [
+                'demand', 'generation'
+            ]:
+                try:
+                    set_file_to_object(self, input_files, file)
+                except FileNotFoundError:
+                    raise FileNotFoundError('File "{}.csv" is mandatory and was not found in the inputs.'.format(file))
 
         # Optional files
         for file in [
