@@ -30,13 +30,34 @@ class GenericModel(ABC):
 
         return annuity_factor, discount_factor, frequency
 
-    def create_model(self, inputs: OptimisationInputs):
+    def _post_process(self, model: pyo.ConcreteModel):
         """
-        Optimisation model.
-        :param inputs: input data and parameters.
-        :return: model
+        Extracts and processes the results of the optimisation.
+        :param model: model containing the variables and equations to be solved.
+        :return results of the optimisation.
         """
-        raise NotImplementedError
+        output = dict()
+        for variable_name in ['optimal_capacity', 'annual_investment_costs', 'annual_operational_costs',
+                              'annual_electricity_bills', 'annual_electricity_revenue', 'total_costs',
+                              'imports_retailer', 'imports_rec', 'exports_retailer', 'exports_rec',
+                              'electricity_produced', 'electricity_consumed']:
+            try:
+                # Get the value of the variable with the same name
+                data = getattr(model, variable_name).get_values()
+            except AttributeError:
+                raise AttributeError(
+                    """The argument "variable" only accepts "optimized_keys", "allocated_consumption",
+                    "verified_allocated_consumption", "locally_sold_production", "ssr_user" or "ssr_rec",
+                    otherwise leave it empty."""
+                )
+            output_data = pd.Series(data)
+            if type(output_data.index) == pd.core.indexes.multi.MultiIndex:
+                output_data = output_data.unstack()
+
+            output[f'{variable_name}'] = output_data
+
+        self._save_results(inputs=self._inputs, results=output)
+        return output
 
     def solve_model(self, model: pyo.ConcreteModel):
         """
@@ -44,13 +65,25 @@ class GenericModel(ABC):
         :param model: model containing the variables and equations to be solved.
         :return results of the optimisation.
         """
-        raise NotImplementedError
+        opt = pyo.SolverFactory(self.solver_name)
+        results = opt.solve(model, tee=True, keepfiles=False)
 
-    def _post_process(self, model: pyo.ConcreteModel):
+        if (results.solver.status != pyo.SolverStatus.ok
+                or results.solver.termination_condition not in {
+                    pyo.TerminationCondition.optimal,
+                    pyo.TerminationCondition.feasible
+                }
+        ):
+            raise ValueError(f"""Problem not properly solved (status: {results.solver.status}, 
+                termination condition: {results.solver.termination_condition}).""")
+
+        return self._post_process(model)
+
+    def create_model(self, inputs: OptimisationInputs):
         """
-        Extracts and processes the results of the optimisation.
-        :param model: model containing the variables and equations to be solved.
-        :return results of the optimisation.
+        Optimisation model.
+        :param inputs: input data and parameters.
+        :return: model
         """
         raise NotImplementedError
 
