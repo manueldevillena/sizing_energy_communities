@@ -1,3 +1,9 @@
 .idea
 venv
 .DS_Store
+*.pyc
+
+docker_commands.sh
+
+results_docker
+example/output
