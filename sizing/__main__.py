@@ -45,8 +45,8 @@ if __name__ == "__main__":
     elif args.model == 'rural':
         problem = Rural(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
     else:
-        raise InvalidModelError("""The model selected does not exist in the list of models. Please, select: "central",
-        "bilevel", or "rural".""")
+        raise InvalidModelError("""The model selected ("{}") does not exist in the list of models. Please, select: "central",
+        "bilevel", or "rural".""".format(args.model))
 
     # Create problem
     tic = time.time()
