@@ -5,7 +5,7 @@ from sizing.core import OptimisationInputs
 from . import GenericModel
 
 
-class Central(GenericModel):
+class Bilevel(GenericModel):
     """
     Planing problem from a fully centralised optimisation standpoint.
     """

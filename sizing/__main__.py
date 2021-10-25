@@ -2,15 +2,20 @@ import argparse
 import os
 import time
 
-from . import OptimisationInputs, Central, Rural
+from . import OptimisationInputs, Central, Bilevel, Rural
+
+
+class InvalidModelError(Exception):
+    pass
 
 
 if __name__ == "__main__":
 
     # Argument parsing
     parser = argparse.ArgumentParser(description="Parses the inputs for the module to run.")
-    parser.add_argument('-ip', '--input_parameters', dest='input_parameters', help="YML file with several options")
-    parser.add_argument('-if', '--input_files', dest='input_files', help='Path to the input files (csv files)')
+    parser.add_argument("-ip", "--input_parameters", dest="input_parameters", help="YML file with several options")
+    parser.add_argument("-if", "--input_files", dest="input_files", help="Path to the input files (csv files)")
+    parser.add_argument("-m", "--model", dest="model", help="Type of model to be run", default="central")
     parser.add_argument("-o", "--output_path", dest="output", help="Output path for the results.")
     parser.add_argument("-s", "--solver", dest="solver", help="Solver name (cbc, cplex ...)", default="cbc")
     parser.add_argument("-v", "--verbose", dest="is_verbose", action="store_true", help="Verbose mode")
@@ -33,8 +38,15 @@ if __name__ == "__main__":
     if args.is_verbose:
         print(f"Input files read in {(tac - tic):.2f} seconds.")
 
-    problem = Rural(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
-    # problem = Central(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
+    if args.model == 'central':
+        problem = Central(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
+    elif args.model == 'bilevel':
+        problem = Bilevel(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
+    elif args.model == 'rural':
+        problem = Rural(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
+    else:
+        raise InvalidModelError("""The model selected does not exist in the list of models. Please, select: "central",
+        "bilevel", or "rural".""")
 
     # Create problem
     tic = time.time()
