@@ -9,7 +9,7 @@ fi
 docker context use $1
 
 # RUN SIMULATION IN REMOTE HOST
-docker run --name $2 -v $3:$4 manueldevillena/energy_community:v1_amd64
+docker run --name $2 -v $3:$4 sizing-merygrid-amd64
 
 # CREATE DUMMY CONTAINER TO RETRIEVE RESULTS
 docker run -d --name dummy.tmp -v $3:$4 python:3.7 sleep 1000

@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import pyomo.environ as pyo
 
@@ -12,23 +13,17 @@ class GenericModel(ABC):
     Generic object with generic methods shared by all models.
     """
 
-    def __init__(self, solver: str = 'cbc'):
+    def __init__(self, inputs: OptimisationInputs, solver: str = 'cbc'):
         """
         Constructor.
+        :param inputs: inputs for the simulation.
         :param solver: solver to be used to solve the model.
         """
+        self.inputs = inputs
         self.solver_name = solver
-
-    def _pre_process(self):
-        """
-        Pre-processing specific to each model.
-        :return: pre-processed data.
-        """
-        annuity_factor = self._compute_annuity_factor(self._inputs.interest_rate, self._inputs.lifetime)
-        discount_factor = self._compute_discount_factor(self._inputs.discount_rate, self._inputs.lifetime)
-        frequency = self._infer_frequency(self._inputs.demand.index)
-
-        return annuity_factor, discount_factor, frequency
+        self.annuity_factor = self._compute_annuity_factor(self.inputs.interest_rate, self.inputs.lifetime)
+        self.discount_factor = self._compute_discount_factor(self.inputs.discount_rate, self.inputs.lifetime)
+        self.frequency = self._infer_frequency(self.inputs.demand.index)
 
     def _post_process(self, model: pyo.ConcreteModel):
         """
@@ -36,7 +31,7 @@ class GenericModel(ABC):
         :param model: model containing the variables and equations to be solved.
         :return results of the optimisation.
         """
-        output = dict()
+        results = dict()
         for variable_name in ['optimal_capacity', 'annual_investment_costs', 'annual_operational_costs',
                               'annual_electricity_bills', 'annual_electricity_revenue', 'total_costs',
                               'imports_retailer', 'imports_rec', 'exports_retailer', 'exports_rec',
@@ -54,10 +49,10 @@ class GenericModel(ABC):
             if type(output_data.index) == pd.core.indexes.multi.MultiIndex:
                 output_data = output_data.unstack()
 
-            output[f'{variable_name}'] = output_data
+            results[f'{variable_name}'] = output_data
 
-        self._save_results(inputs=self._inputs, results=output)
-        return output
+        self._save_results(inputs=self.inputs, results=results)
+        return results
 
     def solve_model(self, model: pyo.ConcreteModel):
         """
@@ -95,7 +90,7 @@ class GenericModel(ABC):
         :param results: dictionary containing the results of the simulation..
         """
         for key, values in results.items():
-            values.to_csv('{output}{name}.csv'.format(name=key, output=inputs.output_path))
+            values.to_csv(os.path.join(inputs.output_path, '{}.csv'.format(key)))
 
     @staticmethod
     def _compute_annuity_factor(interest_rate: float, lifetime: int) -> float:

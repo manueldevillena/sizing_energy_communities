@@ -1,10 +1,9 @@
 #!/bin/zsh
 
 python -m sizing \
-    -ip example/inputs.yml \
-    -if example/input/ \
-    -m bilevel \
+    -ip example_merygrid/inputs.yml \
+    -if example_merygrid/input/ \
+    -m central \
     -s cbc \
-    -o example/output/ \
+    -o example_merygrid/output/ \
     -v
-

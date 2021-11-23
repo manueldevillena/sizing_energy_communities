@@ -1,6 +1,6 @@
 import pyomo.environ as pyo
 
-import sizing.models.constraints as cs
+import sizing.constraints.constraints as cs
 from sizing.core import OptimisationInputs
 from sizing.technologies import SolarPanel
 from . import GenericModel
@@ -18,8 +18,7 @@ class Decomposed(GenericModel):
         :param solver: name of the solver to use.
         :param is_debug: flag to activate debug mode.
         """
-        super().__init__(solver)
-        self._inputs = inputs
+        super().__init__(inputs, solver)
         self._is_debug = is_debug
 
     def create_model(self, **kwargs):
@@ -27,21 +26,18 @@ class Decomposed(GenericModel):
         Optimisation model.
         :return: model
         """
-        # Pre-processing
-        annuity_factor, discount_rate, frequency = self._pre_process()
-
         def _initialise_optimal_capacity(m, u, n):
             """
             Defines the initial optimal capacity of the REC members.
             """
-            return self._inputs.initial_capacity.loc[u, n], 1000
+            return self.inputs.initial_capacity.loc[u, n], 1000
 
         # Linear program
         m = pyo.ConcreteModel()
 
         # Sets
-        m.time = pyo.Set(initialize=self._inputs.demand.index)
-        m.member = pyo.Set(initialize=self._inputs.demand.columns)
+        m.time = pyo.Set(initialize=self.inputs.demand.index)
+        m.member = pyo.Set(initialize=self.inputs.demand.columns)
         m.technology = pyo.Set(initialize=['p', 'b'])
 
         # Decision variables
@@ -83,5 +79,5 @@ class Decomposed(GenericModel):
         m._energy_balance_eqn = pyo.Constraint(m.time, m.member, rule=cs.energy_balance)
         m._local_exchanges_eqn = pyo.Constraint(m.time, rule=cs.local_exchanges)
 
-        self.PV = SolarPanel(self._inputs, m)
+        self.PV = SolarPanel(self.inputs, m)
         self.PV.pv_generation()
