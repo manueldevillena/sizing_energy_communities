@@ -2,7 +2,7 @@ import argparse
 import os
 import time
 
-from . import OptimisationInputs, Central, Bilevel, Rural
+from . import OptimisationInputs, Central, CentralDuals, Rural
 
 
 class InvalidModelError(Exception):
@@ -40,8 +40,8 @@ if __name__ == "__main__":
 
     if args.model == 'central':
         problem = Central(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
-    elif args.model == 'bilevel':
-        problem = Bilevel(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
+    if args.model == 'central_dual':
+        problem = CentralDuals(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
     elif args.model == 'rural':
         problem = Rural(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
     else:
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     # Solve problem
     tic = time.time()
-    results = problem.solve_model(model=model)
+    results, duals = problem.solve_model(model=model)
     tac = time.time()
     if args.is_verbose:
         print(f"Problem solved in {(tac - tic):.2f} seconds.")

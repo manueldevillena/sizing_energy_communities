@@ -3,7 +3,9 @@ import pandas as pd
 import pyomo.environ as pyo
 
 from abc import ABC
+
 from sizing.core import OptimisationInputs
+from sizing.utils import unstack_data
 
 DEFAULT_FREQ = '15T'
 
@@ -46,13 +48,24 @@ class GenericModel(ABC):
                     otherwise leave it empty."""
                 )
             output_data = pd.Series(data)
-            if type(output_data.index) == pd.core.indexes.multi.MultiIndex:
-                output_data = output_data.unstack()
+            results[f'{variable_name}'] = unstack_data(output_data)
 
-            results[f'{variable_name}'] = output_data
+        duals = dict()
+        for constraint in model.component_objects(pyo.Constraint, active=True):
+            indices = [i for i in constraint]
+            if type(indices[0]) == tuple:
+                index = pd.MultiIndex.from_tuples(indices)
+                dual_values = pd.Series(index=index)
+            else:
+                dual_values = pd.Series(index=indices)
+            for index in constraint:
+                dual_values[index] = model.dual[constraint[index]]
+            duals['dual{}'.format(constraint.name)] = unstack_data(dual_values)
 
         self._save_results(inputs=self.inputs, results=results)
-        return results
+        self._save_results(inputs=self.inputs, results=duals)
+
+        return results, duals
 
     def solve_model(self, model: pyo.ConcreteModel):
         """

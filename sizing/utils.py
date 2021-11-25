@@ -8,7 +8,6 @@ except ImportError:
     from yaml import Loader, Dumper
 
 
-
 class ParsingException(Exception):
     def __init__(self, indexes: list):
         super().__init__()
@@ -52,3 +51,13 @@ def set_file_to_object(target_object, path_to_files, file_to_set):
     """
     file_path = '{}/{}.csv'.format(path_to_files, file_to_set)
     setattr(target_object, file_to_set, read_data(file_path))
+
+
+def unstack_data(data):
+    """
+    Unstacks multiindexed dataframes (or series).
+    """
+    if type(data.index) == pd.core.indexes.multi.MultiIndex:
+        return data.unstack()
+    else:
+        return data

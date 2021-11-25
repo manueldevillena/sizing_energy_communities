@@ -9,13 +9,13 @@ fi
 docker context use $1
 
 # RUN SIMULATION IN REMOTE HOST
-docker run --name $2 -v $3:$4 sizing-merygrid-amd64
+docker run --name $2 -v $3:$4 $5
 
 # CREATE DUMMY CONTAINER TO RETRIEVE RESULTS
 docker run -d --name dummy.tmp -v $3:$4 python:3.7 sleep 1000
 
 # COPY SIMULATION RESULTS
-docker cp dummy.tmp:$4 $5
+docker cp dummy.tmp:$4 $6
 
 # REMOVE DUMMY CONTAINER
 docker stop dummy.tmp
@@ -29,4 +29,5 @@ docker context use default
 # $2 = container_energy_community
 # $3 = volume_energy_community
 # $4 = /app/example/output
-# $5 = results_docker
+# $5 = manueldevillena/energy_community:merygrid_amd64
+# $6 = results_docker

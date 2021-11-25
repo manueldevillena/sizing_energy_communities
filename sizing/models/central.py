@@ -34,6 +34,9 @@ class Central(GenericModel):
         # Linear program
         m = pyo.ConcreteModel()
 
+        # Extraction dual variables
+        m.dual = pyo.Suffix(direction=pyo.Suffix.IMPORT)
+
         # Sets
         m.time = pyo.Set(initialize=self.inputs.demand.index)
         m.member = pyo.Set(initialize=self.inputs.demand.columns)
