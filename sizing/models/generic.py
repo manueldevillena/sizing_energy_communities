@@ -33,7 +33,7 @@ class GenericModel(ABC):
         :param model: model containing the variables and equations to be solved.
         :return results of the optimisation.
         """
-        results = dict()
+        results = {}
         for variable_name in ['optimal_capacity', 'annual_investment_costs', 'annual_operational_costs',
                               'annual_electricity_bills', 'annual_electricity_revenue', 'total_costs',
                               'imports_retailer', 'imports_rec', 'exports_retailer', 'exports_rec',
@@ -50,7 +50,7 @@ class GenericModel(ABC):
             output_data = pd.Series(data)
             results[f'{variable_name}'] = unstack_data(output_data)
 
-        duals = dict()
+        duals = {}
         for constraint in model.component_objects(pyo.Constraint, active=True):
             indices = [i for i in constraint]
             if isinstance(indices[0], tuple):
