@@ -49,7 +49,7 @@ def set_file_to_object(target_object, path_to_files, file_to_set):
     :param path_to__files: Path to the csv files.
     :param file_to_set: File to set as an attibute for the given object.
     """
-    file_path = '{}/{}.csv'.format(path_to_files, file_to_set)
+    file_path = f'{path_to_files}/{file_to_set}.csv'
     setattr(target_object, file_to_set, read_data(file_path))
 
 

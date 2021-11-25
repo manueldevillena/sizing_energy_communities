@@ -233,6 +233,6 @@ class Central(GenericModel):
         # m._limit_exports_eqn = pyo.Constraint(m.time, m.member, rule=_limit_exports)
 
         if self._is_debug:
-            m.write('{}/model.lp'.format(self.inputs.output_path), io_options={'symbolic_solver_labels': True})
+            m.write(f'{self.inputs.output_path}/model.lp', io_options={'symbolic_solver_labels': True})
 
         return m

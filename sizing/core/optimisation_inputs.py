@@ -25,7 +25,7 @@ class OptimisationInputs:
             try:
                 setattr(self, attr, input_parameters[attr])
             except KeyError:
-                raise KeyError('Attribute "{}" is mandatory in the configuration file.'.format(attr))
+                raise KeyError(f'Attribute "{attr}" is mandatory in the configuration file.')
 
         # Optional attributes
         for attr in [
@@ -39,13 +39,13 @@ class OptimisationInputs:
         # Mandatory files
         if self.stochastic:
             number_scenarios = len(self.stochastic)
-            files_demand = ['demand_scenario_{}'.format(i) for i in range(1, number_scenarios+1)]
-            files_generation = ['generation_scenario_{}'.format(i) for i in range(1, number_scenarios+1)]
+            files_demand = [f'demand_scenario_{i}' for i in range(1, number_scenarios+1)]
+            files_generation = [f'generation_scenario_{i}' for i in range(1, number_scenarios+1)]
             for file in itertools.chain(*[files_demand, files_generation]):
                 try:
                     set_file_to_object(self, input_files, file)
                 except FileNotFoundError:
-                    raise FileNotFoundError('File "{}.csv" is mandatory and was not found in the inputs.'.format(file))
+                    raise FileNotFoundError(f'File "{file}.csv" is mandatory and was not found in the inputs.')
         else:
             for file in [
                 'demand', 'generation'
@@ -53,7 +53,7 @@ class OptimisationInputs:
                 try:
                     set_file_to_object(self, input_files, file)
                 except FileNotFoundError:
-                    raise FileNotFoundError('File "{}.csv" is mandatory and was not found in the inputs.'.format(file))
+                    raise FileNotFoundError(f'File "{file}.csv" is mandatory and was not found in the inputs.')
 
         # Optional files
         for file in [

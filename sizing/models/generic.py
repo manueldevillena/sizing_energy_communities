@@ -53,14 +53,14 @@ class GenericModel(ABC):
         duals = dict()
         for constraint in model.component_objects(pyo.Constraint, active=True):
             indices = [i for i in constraint]
-            if type(indices[0]) == tuple:
+            if isinstance(indices[0], tuple):
                 index = pd.MultiIndex.from_tuples(indices)
                 dual_values = pd.Series(index=index)
             else:
                 dual_values = pd.Series(index=indices)
             for index in constraint:
                 dual_values[index] = model.dual[constraint[index]]
-            duals['dual{}'.format(constraint.name)] = unstack_data(dual_values)
+            duals[f'dual{constraint.name}'] = unstack_data(dual_values)
 
         self._save_results(inputs=self.inputs, results=results)
         self._save_results(inputs=self.inputs, results=duals)
@@ -103,7 +103,7 @@ class GenericModel(ABC):
         :param results: dictionary containing the results of the simulation..
         """
         for key, values in results.items():
-            values.to_csv(os.path.join(inputs.output_path, '{}.csv'.format(key)))
+            values.to_csv(os.path.join(inputs.output_path, f'{key}.csv'))
 
     @staticmethod
     def _compute_annuity_factor(interest_rate: float, lifetime: int) -> float:
