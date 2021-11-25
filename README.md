@@ -11,10 +11,11 @@
 - Run the example using: 
     `
     python -m sizing \
-    -ip example/inputs.yml \
-    -if example/input/ \
-    --solver cbc \
-    -o example/output/ \
+    -ip example_merygrid/inputs.yml \
+    -if example_merygrid/input/ \
+    -m central_dual \
+    -s gurobi \
+    -o example_merygrid/output/ \
     -v
     `
 - A complete help can be found with: `python sizing -h`
