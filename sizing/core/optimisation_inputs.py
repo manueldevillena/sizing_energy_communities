@@ -20,7 +20,7 @@ class OptimisationInputs:
         # Mandatory attributes
         for attr in [
             'interest_rate', 'discount_rate', 'lifetime', 'efficiency_charge', 'efficiency_discharge', 'charge_rate',
-            'discharge_rate'
+            'discharge_rate', 'maximum_capacity'
         ]:
             try:
                 setattr(self, attr, input_parameters[attr])

@@ -29,7 +29,7 @@ class CentralDuals(GenericModel):
             """
             Defines the initial optimal capacity of the REC members.
             """
-            return self.inputs.initial_capacity.loc[u, n], 1000
+            return self.inputs.initial_capacity.loc[u, n], self.inputs.maximum_capacity
 
         # Linear program
         m = pyo.ConcreteModel()
