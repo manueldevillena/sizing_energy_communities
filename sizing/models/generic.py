@@ -61,6 +61,8 @@ class GenericModel(ABC):
             for index in constraint:
                 dual_values[index] = model.dual[constraint[index]]
             duals[f'dual{constraint.name}'] = unstack_data(dual_values)
+            if constraint.name == '_local_exchanges_eqn':
+                duals[f'dual{constraint.name}_scaled'] = unstack_data(dual_values) / self.discount_factor
 
         self._save_results(inputs=self.inputs, results=results)
         self._save_results(inputs=self.inputs, results=duals)

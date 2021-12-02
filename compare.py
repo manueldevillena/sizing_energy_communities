@@ -2,21 +2,27 @@
 
 import pandas as pd
 
-total = pd.read_csv('example_merygrid/output/total_costs.csv',\
+central_total = pd.read_csv('example_merygrid/output/central_dual/total_costs.csv',\
     header=0, index_col=0, parse_dates=True, infer_datetime_format=True, dtype=float)
-imports = pd.read_csv('example_merygrid/output/imports_rec.csv',\
+central_imports = pd.read_csv('example_merygrid/output/central_dual/imports_rec.csv',\
     header=0, index_col=0, parse_dates=True, infer_datetime_format=True, dtype=float)
-exports = pd.read_csv('example_merygrid/output/exports_rec.csv',\
+central_exports = pd.read_csv('example_merygrid/output/central_dual/exports_rec.csv',\
     header=0, index_col=0, parse_dates=True, infer_datetime_format=True, dtype=float)
-prices = pd.read_csv('example_merygrid/output/dual_local_exchanges_eqn.csv',\
+central_prices = pd.read_csv('example_merygrid/output/central_dual/dual_local_exchanges_eqn_scaled.csv',\
     header=0, index_col=0, parse_dates=True, infer_datetime_format=True, dtype=float)
 
-for u in total.index:
+individual_total = pd.read_csv('example_merygrid/output/individual/total_costs.csv',\
+    header=0, index_col=0, parse_dates=True, infer_datetime_format=True, dtype=float)
+
+for u in central_total.index:
     print('\nMember ' + u)
 
-    explicit = total.loc[u][0]
-    print('Explicit cost: ' + str(explicit))
+    central_explicit = central_total.loc[u][0]
+    #print('Explicit cost: ' + str(central_explicit))
 
-    trade = imports[u].dot(prices) - exports[u].dot(prices)
-    print('Trade cost: ' + str(trade[0]))
-    print('Total cost: ' + str(explicit + trade[0]))
+    central_trade = central_imports[u].dot(central_prices) - central_exports[u].dot(central_prices)
+    #print('Trade cost: ' + str(central_trade[0]))
+    print('central_dual cost: ' + str(central_explicit + central_trade[0]))
+
+    individual_explicit = individual_total.loc[u][0]
+    print('individual cost: ' + str(individual_explicit))

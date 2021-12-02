@@ -57,7 +57,7 @@ class OptimisationInputs:
 
         # Optional files
         for file in [
-            'prices_grid_import', 'prices_grid_export', 'prices_community_import', 'prices_community_export',
+            'prices_grid_import', 'prices_grid_export', 'prices_community_import', 'prices_community_export', 'prices_community_exchange',
             'cost_technology_investment', 'cost_technology_running_fixed', 'cost_technology_running_variable',
             'initial_capacity'
         ]:
