@@ -1,8 +1,7 @@
+import abc
 import os
 import pandas as pd
 import pyomo.environ as pyo
-
-from abc import ABC
 
 from sizing.core import OptimisationInputs
 from sizing.utils import unstack_data
@@ -10,7 +9,7 @@ from sizing.utils import unstack_data
 DEFAULT_FREQ = '15T'
 
 
-class GenericModel(ABC):
+class GenericModel(abc.ABC):
     """
     Generic object with generic methods shared by all models.
     """
@@ -89,6 +88,7 @@ class GenericModel(ABC):
 
         return self._post_process(model)
 
+    @abc.abstractmethod
     def create_model(self, inputs: OptimisationInputs):
         """
         Optimisation model.

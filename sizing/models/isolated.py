@@ -120,7 +120,7 @@ class Isolated(GenericModel):
                 pyo.quicksum(
                     m.imports_retailer[t, u] * self.inputs.prices_grid_import.loc[t, u] +
                     m.imports_rec[t, u] * self.inputs.prices_community_import.loc[t, u] +
-                    m.imports_rec[t, u] * self.inputs.prices_community_exchange.loc[t][0]
+                    m.imports_rec[t, u] * self.inputs.prices_community_exchange[t]
                     for t in m.time
                 )
             )
@@ -132,7 +132,7 @@ class Isolated(GenericModel):
             return m.annual_electricity_revenue[u] == (
                 pyo.quicksum(
                     m.exports_retailer[t, u] * self.inputs.prices_grid_export.loc[t, u] +
-                    m.exports_rec[t, u] * self.inputs.prices_community_exchange.loc[t][0]
+                    m.exports_rec[t, u] * self.inputs.prices_community_exchange[t]
                     for t in m.time
                 )
             )

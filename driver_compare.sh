@@ -46,4 +46,5 @@ echo -------------------------
 echo RUNNING COMPARISON SCRIPT
 echo -------------------------
 
-./compare.py
+pwd
+python scripts/compare.py

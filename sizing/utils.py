@@ -26,6 +26,7 @@ def read_data(data_path: str) -> pd.DataFrame:
     """
     df = pd.read_csv(data_path, header=0, index_col=0, parse_dates=True, infer_datetime_format=True, dtype=float)
     null_loc, _ = np.where(df.isna())
+    df = df.squeeze()
     if len(null_loc) != 0:
         raise ParsingException(indexes=df.index[null_loc])
     return df
@@ -46,8 +47,8 @@ def set_file_to_object(target_object, path_to_files, file_to_set):
     """
     Sets a given csv file as an attribute of an object with the same name.
     :param target_object: Object for which the attribute is created.
-    :param path_to__files: Path to the csv files.
-    :param file_to_set: File to set as an attibute for the given object.
+    :param path_to_files: Path to the csv files.
+    :param file_to_set: File to set as an attribute for the given object.
     """
     file_path = f'{path_to_files}/{file_to_set}.csv'
     setattr(target_object, file_to_set, read_data(file_path))
