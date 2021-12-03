@@ -30,6 +30,18 @@ python -m sizing \
     -o example_merygrid/output/individual \
     -v
 
+echo ----------------------
+echo RUNNING ISOLATED MODEL
+echo ----------------------
+
+python -m sizing \
+    -ip example_merygrid/inputs.yml \
+    -if example_merygrid/input/ \
+    -m isolated \
+    -s gurobi \
+    -o example_merygrid/output/isolated \
+    -v
+
 echo -------------------------
 echo RUNNING COMPARISON SCRIPT
 echo -------------------------

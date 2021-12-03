@@ -14,6 +14,9 @@ central_prices = pd.read_csv('example_merygrid/output/central_dual/dual_local_ex
 individual_total = pd.read_csv('example_merygrid/output/individual/total_costs.csv',\
     header=0, index_col=0, parse_dates=True, infer_datetime_format=True, dtype=float)
 
+isolated_total = pd.read_csv('example_merygrid/output/isolated/total_costs.csv',\
+    header=0, index_col=0, parse_dates=True, infer_datetime_format=True, dtype=float)
+
 for u in central_total.index:
     print('\nMember ' + u)
 
@@ -26,3 +29,6 @@ for u in central_total.index:
 
     individual_explicit = individual_total.loc[u][0]
     print('individual cost: ' + str(individual_explicit))
+
+    isolated_explicit = isolated_total.loc[u][0]
+    print('isolated cost: ' + str(isolated_explicit))

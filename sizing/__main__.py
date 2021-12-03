@@ -2,7 +2,7 @@ import argparse
 import os
 import time
 
-from . import OptimisationInputs, Central, CentralDuals, Individual, Rural
+from . import OptimisationInputs, Central, CentralDuals, Individual, Isolated, Rural
 
 
 class InvalidModelError(Exception):
@@ -44,6 +44,8 @@ if __name__ == "__main__":
         problem = CentralDuals(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
     elif args.model == 'individual':
         problem = Individual(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
+    elif args.model == 'isolated':
+        problem = Isolated(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
     elif args.model == 'rural':
         problem = Rural(solver=args.solver, inputs=inputs, is_debug=args.is_debug)
     else:
